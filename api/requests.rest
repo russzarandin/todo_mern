@@ -1,0 +1,18 @@
+### For testing and making requests to the server endpoint directly not part of actual application code
+
+### Retrieve todos from server
+GET http://localhost:3001/todos
+
+### Create new todo item
+POST http://localhost:3001/todo/new
+Content-Type: application/json
+
+{
+    "text": "Buy house"
+}
+
+### Delete todo item using item with :id
+DELETE http://localhost:3001/todo/delete/64cfe5b9872539422d38e6c8
+
+### Mark the item as either complete or incomplete
+PUT http://localhost:3001/todo/complete/64d4105e66b9ffcacdd4fbfd
