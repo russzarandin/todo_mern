@@ -11,10 +11,6 @@ const TodoSchema = new Schema({
         type: Boolean,
         default: false
     },
-    timestamp: {
-        type: String,
-        default: Date.now()
-    },
     priority: {
         type: String,
         default: 'Low'
@@ -23,8 +19,6 @@ const TodoSchema = new Schema({
         type: Date,
         default: Date.now()
     }
-})
+}, {timestamps: true})
 
-const Todo = mongoose.model('Todo', TodoSchema);
-
-module.exports = Todo;
+module.exports = mongoose.model('Todo', TodoSchema);
