@@ -19,7 +19,7 @@ body {
     color: var(--light);
 }
 
-.App {
+.mainPage {
     padding: 32px;
 }
 
@@ -48,7 +48,6 @@ h4 {
     cursor: pointer;
     margin-bottom: 16px;
 }
-
 
 .todo:hover {
     opacity: 0.7;
@@ -174,3 +173,41 @@ h4 {
     cursor: pointer;
 }
 
+
+header {
+    margin: 0;
+    background-color: #333;
+    padding: 1rem;
+    box-shadow: 0px 3px 5px -5px rgba(0, 0, 0, 0.3);
+
+} 
+header a {
+    text-decoration: none;
+    color: #fff;
+    padding: 14px;
+}
+
+header a:hover {
+    color:#61759B;
+}
+
+header .navbarItems {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .navbarItems{
+    display: flex;
+    justify-content: flex-end;
+    list-style: none;
+}
+
+header li {
+    margin-left: 20px;
+    font-size: x-large;
+}
+
+header li:first-child {
+    margin-left: 0;
+}
