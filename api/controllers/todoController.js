@@ -41,6 +41,7 @@ const createTodo = async (req, res) => {
     }
         //res.json(todo);
 };
+
 // delete a todo item
 const deleteTodo = async (req, res) => {
     const { id } = req.params
