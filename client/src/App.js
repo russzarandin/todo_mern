@@ -16,52 +16,54 @@ function App() {
     const [newPriority, setNewPriority] = useState("low");
     const [newDueDate, setNewDueDate] = useState("");
     const [editPriority, setEditPriority] = useState("low");
-    const [editDueDate, setDueDate] = useState("");
+    const [editDueDate, setEditDueDate] = useState("");
     const [sortCriteria, setSortCriteria] = useState("");
 
     // Fetch initial list of todos from server then calls GetTodos function 
     useEffect(() => {
         GetTodos();
-        console.log(todos);
-    }, [])
+    }, []);
 
     /* Fetches todos using fetch API and updates 'todos' states,
     Sends GET request to the server's /todos */
     const GetTodos = () => {
         fetch(API_BASE + '/todos')
-            .then(res => res.json())
-            .then(data => setTodos(data))
-            .catch(err => console.error('Error :', err));
+            .then((res) => res.json())
+            .then((data) => setTodos(data))
+            .catch((err) => console.error('Error :', err));
     }
 
-    /* Sends a PUT request to mark a todo as complete or incomplete  using it's ID 
-    and then updates the 'todos' state */ 
-    const completeTodo = async id => {
-        const data = await fetch(API_BASE + '/todo/complete/' + id)
-            .then(res => res.json());
+    /* Sends a PUT request to mark a todo as complete or incomplete  using it's ID */ 
+    const completeTodo = async (id) => {
+        const data = await fetch(API_BASE + '/todo/complete/' + id, {
+            method: 'PUT',
+        }).then((res) => res.json());
 
-        setTodos(todos => todos.map(todo => {
+        setTodos((todos) => 
+            todos.map((todo) => {
             if (todo._id === data._id) {
-                todo.complete = data.complete;
+                return { ...todo, complete: data.complete }; // Ensure immutability
             }
-
-            return todo;
-        }));
-    }
+                return todo;
+            })
+        );
+    };
 
     /* Sends a DELETE request to delete a todo based on it's id and
     updates the 'todos' state */
-    const deleteTodo = async id => {
+    const deleteTodo = async (id) => {
         const data = await fetch(API_BASE + '/todo/delete/' + id, {
-            method: "DELETE"
-        }).then(res => res.json());
+            method: 'DELETE'
+        }).then((res) => res.json());
 
-        setTodos(todos => todos.filter(todo => todo._id !== data._id));
+        setTodos((todos) => todos.filter((todo) => todo._id !== data._id));
     }
 
     /* Sends a POST request to make a new todo, updates 'todos' state
      */
     const addTodo = async () => {
+        if (!newTodo) return;
+
         const data = await fetch(API_BASE + '/todo/new', {
             method: "POST",
             headers: {
@@ -72,13 +74,16 @@ function App() {
                 priority: newPriority,
                 dueDate: newDueDate
             }),
-        }).then(res => res.json());
+        }).then((res) => res.json());
 
         setTodos([...todos, data]);
         setPopupActive(false);
         setNewTodo("");
+        setNewPriority("low");
+        setNewDueDate("");
     }
 
+    // Sorts todos based on criteria
     const sortTodo = async () => {
         const data = await fetch(API_BASE + '/todo/sort', {
             method: "PUT",
@@ -91,11 +96,9 @@ function App() {
                 sortByDueDate: newPriority === "dueDate",
             }),
 
-        });
-    }
-
-
-
+        }).then((res) => res.json());
+        setTodos(data);
+    };
 
 	return (
         <div className ="App">
@@ -107,8 +110,6 @@ function App() {
                             path="/"
                             element={<Home />}
                         />
-
-
                     </Routes>
                 </div>
             </BrowserRouter>
@@ -116,25 +117,47 @@ function App() {
                 <h1>Checklist</h1>
                 <h4>Your Tasks</h4>
 
+                {/* Sort options */}
+                <div className="sort-options">
+                    <label htmlFor="sortCriteria">Sort By:</label>
+                    <select
+                        id="sortCriteria"
+                        value={sortCriteria}
+                        onChange={(e) => setSortCriteria(e.target.value)}
+                    >
+                        <option value="priority">Priority</option>
+                        <option value="dueDate">Due Date</option>
+                    </select>
+                    <button onClick={sortTodo}>Sort</button>
+                </div>
+
+
                 <div className ="todos">
-                    {todos.map(todo => (
+                    {todos.map((todo) => (
                         <div className = {"todo " + (todo.complete ? "is-complete" : "")}
                         key = {todo._id} 
-                        onClick = {() => completeTodo(todo._id)}>
+                        onClick = {() => completeTodo(todo._id)}
+                        >
                             <div className ="checkbox"></div>
 
                             <div className ="text">{ todo.text }</div>
                             <div className ="priority">{ todo.priority }</div>
                             <div className ="dueDate">{ todo.dueDate }</div>
 
-                            <div className ="delete-todo" onClick = {() => deleteTodo(todo._id)}>x</div>
+                        {/* Prevent event propgagation on delete */}
+                            <div 
+                            className ="delete-todo" 
+                            onClick = {(e) => { 
+                                e.stopPropagation();
+                                deleteTodo(todo._id);
+                            }}>x</div>
                         </div>
                     ))}
                 </div>
 
                 <div className ="addPopup" onClick = {() => setPopupActive(true)}>+</div>
 
-                {popupActive ? (
+                {popupActive && ( // use logical AND for conditional rendering
                     <div className ="popup">
                         <div className ="closePopup" onClick = {() => setPopupActive(false)}>x</div>
                         <div className ="content">
@@ -143,13 +166,37 @@ function App() {
                             <input 
                                 type ="text" 
                                 className ="add-todo-input" 
-                                onChange = {e => setNewTodo(e.target.value)}
+                                placeholder="Task name"
+                                onChange = {(e) => setNewTodo(e.target.value)}
                                 value = {newTodo} 
                             />
+                            {/* Priority input */}
+                            <div className='input-group'>
+                                <label htmlFor="Priority">Priority:</label>
+                                <select
+                                    id='priority'
+                                    value={newPriority}
+                                    onChange={(e) => setNewPriority(e.target.value)}
+                                >
+                                    <option value="low">Low</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="high">High</option>
+                                </select>
+                            </div>
+                            {/* Due date input */}
+                            <div className='input-group'>
+                                <label htmlFor="dueDate">Due Date:</label>
+                                <input 
+                                type="date"
+                                id='dueDate'
+                                value={newDueDate}
+                                onChange={(e) => setNewDueDate(e.target.value)}
+                                />
+                            </div>
                             <div className ="button" onClick = {addTodo}>Create Task</div>
                         </div>
                     </div>
-                    ) : ''}
+                    )}
             </div>
 		</div>
 	);
