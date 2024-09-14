@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const getTodos = async (req, res) => {
     try {
         //const todos = await Todo.find();
-        const todos = await Todo.find({}).sort({created: -1}) // Sort by creation date
+        const todos = await Todo.find({}).sort({created: -1 }) // Sort by creation date
         res.status(200).json(todos)
     } catch(error) {
         res.status(500).json({ error: error.message}); // Handle server errors
@@ -29,7 +29,7 @@ const getTodo = async (req, res) => {
         return res.status(404).json({error: 'No such task'})
     }
 
-    res.status(200).json({todo}) // Return the todo directly
+    res.status(200).json(todo) // Return the todo directly
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -41,7 +41,7 @@ const createTodo = async (req, res) => {
     const {text, complete = false, priority = 'low', dueDate} = req.body // Ensure default values
     
     if (!text) {
-        return re.status(400).json({ error: 'Text is required'});
+        return res.status(400).json({ error: 'Text is required'});
     }
 
     // add doc to db
@@ -63,13 +63,13 @@ const deleteTodo = async (req, res) => {
     }
 
     try {
-    const todo = await Todo.findOneAndDelete({_id: id})
+    const todo = await Todo.findOneAndDelete({ _id: id })
 
     if (!todo) {
         return res.status(404).json({error: 'No such task'}) // 404 for consistency
     }
 
-    res.status(200).json({todo});
+    res.status(200).json({ message: 'Task deleted successfully', todo });
     } catch (error) {
         res.status(500).json({ error: error.message});
     }
@@ -85,13 +85,13 @@ const updateTodo = async (req, res) => {
     }
 
     try {
-    const todo = await Todo.findOneAndUpdate({_id: id}, req.body, {
+    const todo = await Todo.findOneAndUpdate({ _id: id }, req.body, {
         new: true,
         runValidators: true
     });
 
     if (!todo) {
-        return res.status(404).json({error: 'No such task'})
+        return res.status(404).json({ error: 'No such task' })
     }
 
     res.status(200).json(todo)

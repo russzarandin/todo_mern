@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route} from 'react-router-dom';
 import Home from './pages/Home';
 import Navbar from './components/Navbar';
 
-const API_BASE = 'http://localhost:3000';
+const API_BASE = '/api/entries';
 
 // State management using useState hook
 function App() {
