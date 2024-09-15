@@ -6,10 +6,10 @@ const mongoose = require('mongoose');
 const getTodos = async (req, res) => {
     try {
         //const todos = await Todo.find();
-        const todos = await Todo.find({}).sort({created: -1 }) // Sort by creation date
+        const todos = await Todo.find({}).sort({ createdAt: -1 }) // Sort by creation date
         res.status(200).json(todos)
     } catch(error) {
-        res.status(500).json({ error: error.message}); // Handle server errors
+        res.status(500).json({ error: error.message }); // Handle server errors
     }
 };
 
@@ -40,9 +40,28 @@ const getTodo = async (req, res) => {
 const createTodo = async (req, res) => {
     const {text, complete = false, priority = 'low', dueDate} = req.body // Ensure default values
     
+    let emptyFields = []
+
     if (!text) {
-        return res.status(400).json({ error: 'Text is required'});
+        emptyFields.push('text')
     }
+
+    if (!complete) {
+        emptyFields.push('completed?')
+    }
+
+    if (!priority) {
+        emptyFields.push('priority')
+    }
+
+    if (!dueDate) {
+        emptyFields.push('dueDate')
+    }
+
+    if (emptyFields.length > 0) {
+        return res.status(400).json({ error: 'Please fill in all fields', emptyFields})
+    }
+
 
     // add doc to db
     try {

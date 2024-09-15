@@ -1,5 +1,4 @@
 const express = require('express');
-const router = express.Router();
 const {
     getTodos,
     getTodo,
@@ -8,6 +7,7 @@ const {
     updateTodo
 } = require('../controllers/todoController');
 
+const router = express.Router();
 
 
 // Retrieves all the todos from the database and convert to a JSON
