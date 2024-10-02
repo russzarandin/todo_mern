@@ -13,6 +13,7 @@ function App() {
     
     const [todos, setTodos] = useState([]);
     const [sortCriteria, setSortCriteria] = useState("");
+    const [popupActive, setPopupActive] = useState(false);
 
     // Fetch initial list of todos from server then calls GetTodos function 
     useEffect(() => {
@@ -137,7 +138,7 @@ function App() {
                         </div>
                     ))}
                 </div>
-                
+                <div className="addPopup" onClick={() => setPopupActive(true)}>+</div>
                 {/* AddTodoModal Component */}
                 <AddTodoModal addTodo={addTodo} />
             </div>

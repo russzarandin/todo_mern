@@ -78,6 +78,7 @@ h4 {
 
 .todo.is-complete .text {
     text-decoration: line-through;
+    color: #CCCCCC;
 }
 
 .todo .delete-todo {
@@ -97,8 +98,11 @@ h4 {
 
 .addPopup {
     position: fixed;
-    bottom: 32px;
-    right: 32px;
+    bottom: 20px;
+    right: 20px;
+    background-color: #28a745;
+    color:  var(--light);
+    font-size: 2rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -107,7 +111,6 @@ h4 {
     border-radius: 999px;
     font-size: 28px;
     font-weight: 900;
-    color:  var(--light);
     background-image: linear-gradient(to bottom right, var(--primary), var(--secondary));
     cursor: pointer;
 }

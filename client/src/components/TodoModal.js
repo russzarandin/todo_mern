@@ -25,10 +25,8 @@ function AddTodoModal({ show, onClose, onAdd}) {
 
     return (
         <div>
-            <div className="addPopup" onClick={() => setPopupActive(true)}>+</div>
             {popupActive && (
                 <div className="popup">
-                    <div className="closePopup" onClick={() => setPopupActive(false)}>x</div>
                     <div className="content">
                         <h3>Add Task</h3>
                         <input
