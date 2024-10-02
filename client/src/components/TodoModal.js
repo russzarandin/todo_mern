@@ -1,65 +1,65 @@
 import React, { useState } from 'react';
 
 function AddTodoModal({ show, onClose, onAdd}) {
-    const [text, setText] = useState('');
-    const [completed, setCompleted] = useState(false);
-    const [priority, setPriority] = useState('Low');
-    const [dueDate, setDueDate] = useState('');
+    const [newTodo, setNewTodo] = useState('');
+    const [newPriority, setNewPriority] = useState('Low');
+    const [newDueDate, setNewDueDate] = useState('');
+    const [popupActive, setPopupActive] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const newTodo = {
-            text,
-            completed,
-            priority,
-            dueDate
+            text: newTodo,
+            complete: false, // Ensures the new todos are incomplete on default
+            priority: newPriority,
+            dueDate: newDueDate
         };
 
-        const res = await fetch('/todos', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newTodo),
-        });
-
-        const data = await res.json();
-        onAdd(data);
-        onClose();
+        setPopupActive(false);
+        setNewTodo("");
+        setNewPriority("low");
+        setNewDueDate("");
     };
 
-    if (!show) {
-        return null;
-    }
+    if (!popupActive) return null;
 
     return (
-        <div className="modal">
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Text:
-                    <input type="text" value={text} onChange={(e) => setText(e.target.value)} />
-                </label>
-                <label>
-                    Completed:
-                    <input type="checkbox" checked={completed} onChange={(e) => setCompleted(e.target.checked)} />
-                </label>
-                <label>
-                    Priority:
-                    <select value={priority} onChange={(e) => setPriority(e.target.value)}>
-                        <option value="Low">Low</option>    
-                        <option value="Medium">Medium</option>    
-                        <option value="High">High</option>    
-                    </select>
-                </label>
-                <label>
-                    Due Date:
-                    <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
-                </label>
-                <button type="submit">Add Todo</button>
-            </form>
-            <button onClick={onClose}>Close</button>
+        <div>
+            <div className="addPopup" onClick={() => setPopupActive(true)}>+</div>
+            {popupActive && (
+                <div className="popup">
+                    <div className="closePopup" onClick={() => setPopupActive(false)}>x</div>
+                    <div className="content">
+                        <h3>Add Task</h3>
+                        <input
+                            type="text"
+                            placeholder="Task name"
+                            onChange={(e) => setNewTodo(e.target.value)}
+                            value={newTodo}
+                        />
+                        <label htmlFor="priority">Priority:</label>
+                        <select
+                            id="priority"
+                            value={newPriority}
+                            onChange={(e) => setNewPriority(e.target.value)}
+                        >
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                        <label htmlFor="dueDate">Due Date:</label>
+                        <input
+                            type="date"
+                            id="dueDate"
+                            value={newDueDate}
+                            onChange={(e) => setNewDueDate(e.target.value)}
+                        />
+                        <div className="button" onClick={handleSubmit}>Create Task</div>
+                    </div>
+                </div>
+            )}
         </div>
     );
-}
+};
 
 export default AddTodoModal;

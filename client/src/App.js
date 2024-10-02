@@ -29,11 +29,11 @@ function App() {
     }
 
     /* Sends a PUT request to mark a todo as complete or incomplete  using it's ID */ 
-    const completeTodo = async (id) => {
+    const completeTodo = async (id, currentStatus) => {
         const data = await fetch(API_BASE + '/' + id, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application.json' },
-            body: JSON.stringify({ complete: true })
+            body: JSON.stringify({ complete: !currentStatus })
         }).then((res) => res.json());
 
         setTodos(todos.map((todo) =>
@@ -54,12 +54,12 @@ function App() {
     /* Sends a POST request to make a new todo, updates 'todos' state
      */
     const addTodo = async (newTodo) => {
-        const data = await fetch(API_BASE + '/todo/new', {
+        const data = await fetch(API_BASE, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(newTodo),
+            body: JSON.stringify({ ...newTodo, complete: false}),
         }).then((res) => res.json());
 
         setTodos([...todos, data]);
@@ -67,7 +67,7 @@ function App() {
 
     // Sorts todos based on criteria
     const sortTodo = async () => {
-        const data = await fetch(API_BASE + '/todo/sort', {
+        const data = await fetch(API_BASE + '/sort', {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -117,7 +117,7 @@ function App() {
                         <div
                             className={"todo " + (todo.complete ? "is-complete" : "")}
                             key={todo._id}
-                            onClick={() => completeTodo(todo._id)}
+                            onClick={() => completeTodo(todo._id, todo.complete)}
                         >
                             <div className="checkbox"></div>
                             <div className="text">{todo.text}</div>
