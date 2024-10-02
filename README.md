@@ -6,3 +6,4 @@ Backend dependecies - nodemon, express, cors, mongoose, dotenv, bcrypt, jsonwebt
 
 Frontend dependencies - nodemon, react-router-dom
 
+Git commit test
