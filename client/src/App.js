@@ -33,7 +33,7 @@ function App() {
     const completeTodo = async (id, currentStatus) => {
         const data = await fetch(API_BASE + '/' + id, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application.json' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ complete: !currentStatus })
         }).then((res) => res.json());
 
@@ -138,9 +138,9 @@ function App() {
                         </div>
                     ))}
                 </div>
-                <div className="addPopup" onClick={() => setPopupActive(true)}>+</div>
                 {/* AddTodoModal Component */}
                 <AddTodoModal addTodo={addTodo} />
+                <div className="addPopup" onClick={() => setPopupActive(true)}>+</div>
             </div>
 		</div>
 	);
