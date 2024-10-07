@@ -100,7 +100,6 @@ h4 {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: #28a745;
     color:  var(--light);
     font-size: 2rem;
     display: flex;
@@ -126,7 +125,7 @@ h4 {
     padding: 32px;
     border-radius: 16px;
     box-shadow: 0px 3px 24px var(--dark);
-    background-color: lightblue;
+    background-color: var(--dark-alt);
 }
 
 .closePopup {
@@ -146,21 +145,15 @@ h4 {
 }
 
 .popup h3 {
-    color: var(--dark);
+    color: var(--light);
     margin-bottom: 16px;
     font-weight: 400;
     text-transform: uppercase;
 }
 
-.add-todo-input {
-    appearance: none;
-    border: none;
-    outline: none;
-    background-color: #FFF;
-    padding: 16px;
-    border-radius: 16px;
-    width: 100%;
-    font-size: 20px;
+.popup div > label {
+    display: block;
+    padding: 0.2rem;
 }
 
 .button {
