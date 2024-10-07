@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function AddTodoModal({ show, onClose, onAdd}) {
+function AddTodoModal({ show, onClose, onAdd }) {
     const [newTodoInput, setNewTodoInput] = useState('');
     const [newPriority, setNewPriority] = useState('Low');
     const [newDueDate, setNewDueDate] = useState('');
@@ -22,7 +22,7 @@ function AddTodoModal({ show, onClose, onAdd}) {
         setNewPriority("low");
         setNewDueDate("");
 
-        onClose()
+        onClose();
     };
 
     if (!show) return null;
@@ -51,7 +51,7 @@ function AddTodoModal({ show, onClose, onAdd}) {
                     </select>
                     <label htmlFor="dueDate">Due Date:</label>
                     <input
-                        type="date"
+                        type="datetime-local"
                         id="dueDate"
                         value={newDueDate}
                         onChange={(e) => setNewDueDate(e.target.value)}

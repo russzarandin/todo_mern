@@ -64,6 +64,7 @@ function App() {
         }).then((res) => res.json());
 
         setTodos([...todos, data]);
+        setPopupActive(false); // Close modal after adding a new todo
     };
 
     // Sorts todos based on criteria
@@ -139,7 +140,7 @@ function App() {
                     ))}
                 </div>
                 {/* AddTodoModal Component */}
-                <AddTodoModal addTodo={addTodo} />
+                <AddTodoModal show={popupActive} onClose={() => setPopupActive(false)} onAdd={addTodo} />
                 <div className="addPopup" onClick={() => setPopupActive(true)}>+</div>
             </div>
 		</div>
