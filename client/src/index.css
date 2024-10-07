@@ -78,6 +78,7 @@ h4 {
 
 .todo.is-complete .text {
     text-decoration: line-through;
+    color: #CCCCCC;
 }
 
 .todo .delete-todo {
@@ -97,8 +98,10 @@ h4 {
 
 .addPopup {
     position: fixed;
-    bottom: 32px;
-    right: 32px;
+    bottom: 20px;
+    right: 20px;
+    color:  var(--light);
+    font-size: 2rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -107,7 +110,6 @@ h4 {
     border-radius: 999px;
     font-size: 28px;
     font-weight: 900;
-    color:  var(--light);
     background-image: linear-gradient(to bottom right, var(--primary), var(--secondary));
     cursor: pointer;
 }
@@ -123,7 +125,7 @@ h4 {
     padding: 32px;
     border-radius: 16px;
     box-shadow: 0px 3px 24px var(--dark);
-    background-color: lightblue;
+    background-color: var(--dark-alt);
 }
 
 .closePopup {
@@ -143,21 +145,15 @@ h4 {
 }
 
 .popup h3 {
-    color: var(--dark);
+    color: var(--light);
     margin-bottom: 16px;
     font-weight: 400;
     text-transform: uppercase;
 }
 
-.add-todo-input {
-    appearance: none;
-    border: none;
-    outline: none;
-    background-color: #FFF;
-    padding: 16px;
-    border-radius: 16px;
-    width: 100%;
-    font-size: 20px;
+.popup div > label {
+    display: block;
+    padding: 0.2rem;
 }
 
 .button {

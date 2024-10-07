@@ -1,9 +1,10 @@
-**/api/.env
+# Ignore node_modules in root and subfolders
+/node_modules/
+/api/node_modules/
+/client/node_modules/
+api/node_modules
+
+# Ignore environment files
+/api/.env
 
 /client/README.md
-
-/node_modules
-
-/client/node_modules
-
-node_modules

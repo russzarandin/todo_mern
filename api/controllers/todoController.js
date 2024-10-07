@@ -46,20 +46,8 @@ const createTodo = async (req, res) => {
         emptyFields.push('text')
     }
 
-    if (!complete) {
-        emptyFields.push('completed?')
-    }
-
-    if (!priority) {
-        emptyFields.push('priority')
-    }
-
-    if (!dueDate) {
-        emptyFields.push('dueDate')
-    }
-
     if (emptyFields.length > 0) {
-        return res.status(400).json({ error: 'Please fill in all fields', emptyFields})
+        return res.status(400).json({ error: 'Please fill in all fields', emptyFields })
     }
 
 

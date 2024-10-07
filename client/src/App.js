@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route} from 'react-router-dom';
 // pages & components
 import Home from './pages/Home';
 import Navbar from './components/Navbar';
+import AddTodoModal from "./components/TodoModal";
 
 const API_BASE = '/api/entries';
 
@@ -11,13 +12,8 @@ const API_BASE = '/api/entries';
 function App() {
     
     const [todos, setTodos] = useState([]);
-    const [popupActive, setPopupActive] = useState(false);
-    const [newTodo, setNewTodo] = useState("");
-    const [newPriority, setNewPriority] = useState("low");
-    const [newDueDate, setNewDueDate] = useState("");
-    const [editPriority, setEditPriority] = useState("low");
-    const [editDueDate, setEditDueDate] = useState("");
     const [sortCriteria, setSortCriteria] = useState("");
+    const [popupActive, setPopupActive] = useState(false);
 
     // Fetch initial list of todos from server then calls GetTodos function 
     useEffect(() => {
@@ -27,73 +23,61 @@ function App() {
     /* Fetches todos using fetch API and updates 'todos' states,
     Sends GET request to the server's /todos */
     const GetTodos = () => {
-        fetch(API_BASE + '/todos')
+        fetch(API_BASE)
             .then((res) => res.json())
             .then((data) => setTodos(data))
             .catch((err) => console.error('Error :', err));
     }
 
     /* Sends a PUT request to mark a todo as complete or incomplete  using it's ID */ 
-    const completeTodo = async (id) => {
-        const data = await fetch(API_BASE + '/todo/complete/' + id, {
-            method: 'PUT',
+    const completeTodo = async (id, currentStatus) => {
+        const data = await fetch(API_BASE + '/' + id, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ complete: !currentStatus })
         }).then((res) => res.json());
 
-        setTodos((todos) => 
-            todos.map((todo) => {
-            if (todo._id === data._id) {
-                return { ...todo, complete: data.complete }; // Ensure immutability
-            }
-                return todo;
-            })
-        );
+        setTodos(todos.map((todo) =>
+            todo._id === data._id ? { ...todo, complete: data.complete } : todo
+        ));
     };
 
     /* Sends a DELETE request to delete a todo based on it's id and
     updates the 'todos' state */
     const deleteTodo = async (id) => {
-        const data = await fetch(API_BASE + '/todo/delete/' + id, {
+        const data = await fetch(API_BASE + '/' + id, {
             method: 'DELETE'
         }).then((res) => res.json());
 
-        setTodos((todos) => todos.filter((todo) => todo._id !== data._id));
+        setTodos(todos.filter((todo) => todo._id !== data._id));
     }
 
     /* Sends a POST request to make a new todo, updates 'todos' state
      */
-    const addTodo = async () => {
-        if (!newTodo) return;
-
-        const data = await fetch(API_BASE + '/todo/new', {
+    const addTodo = async (newTodo) => {
+        const data = await fetch(API_BASE, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({
-                text: newTodo, 
-                priority: newPriority,
-                dueDate: newDueDate
-            }),
+            body: JSON.stringify({ ...newTodo, complete: false}),
         }).then((res) => res.json());
 
         setTodos([...todos, data]);
-        setPopupActive(false);
-        setNewTodo("");
-        setNewPriority("low");
-        setNewDueDate("");
-    }
+        setPopupActive(false); // Close modal after adding a new todo
+    };
 
     // Sorts todos based on criteria
     const sortTodo = async () => {
-        const data = await fetch(API_BASE + '/todo/sort', {
+        const data = await fetch(API_BASE + '/sort', {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                sortCriteria: newPriority,
+                sortCriteria,
                 ascending: false,
-                sortByDueDate: newPriority === "dueDate",
+                sortByDueDate: sortCriteria === "dueDate",
             }),
 
         }).then((res) => res.json());
@@ -102,17 +86,15 @@ function App() {
 
 	return (
         <div className ="App">
+            {/*
             <BrowserRouter>
                 <Navbar />            
                 <div className="pages">
                     <Routes>
-                        <Route
-                            path="/"
-                            element={<Home />}
-                        />
+                        <Route path="/" element={<Home />} />
                     </Routes>
                 </div>
-            </BrowserRouter>
+            </BrowserRouter> */}
             <div className="mainPage">
                 <h1>Checklist</h1>
                 <h4>Your Tasks</h4>
@@ -132,71 +114,34 @@ function App() {
                 </div>
 
 
-                <div className ="todos">
+                <div className="todos">
                     {todos.map((todo) => (
-                        <div className = {"todo " + (todo.complete ? "is-complete" : "")}
-                        key = {todo._id} 
-                        onClick = {() => completeTodo(todo._id)}
+                        <div
+                            className={"todo " + (todo.complete ? "is-complete" : "")}
+                            key={todo._id}
+                            onClick={() => completeTodo(todo._id, todo.complete)}
                         >
-                            <div className ="checkbox"></div>
+                            <div className="checkbox"></div>
+                            <div className="text">{todo.text}</div>
+                            <div className="priority">{todo.priority}</div>
+                            <div className="dueDate">{todo.dueDate}</div>
 
-                            <div className ="text">{ todo.text }</div>
-                            <div className ="priority">{ todo.priority }</div>
-                            <div className ="dueDate">{ todo.dueDate }</div>
-
-                        {/* Prevent event propgagation on delete */}
-                            <div 
-                            className ="delete-todo" 
-                            onClick = {(e) => { 
-                                e.stopPropagation();
-                                deleteTodo(todo._id);
-                            }}>x</div>
+                            {/* Prevent event propagation on delete */}
+                            <div
+                                className="delete-todo"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteTodo(todo._id);
+                                }}
+                            >
+                                x
+                            </div>
                         </div>
                     ))}
                 </div>
-
-                <div className ="addPopup" onClick = {() => setPopupActive(true)}>+</div>
-
-                {popupActive && ( // use logical AND for conditional rendering
-                    <div className ="popup">
-                        <div className ="closePopup" onClick = {() => setPopupActive(false)}>x</div>
-                        <div className ="content">
-                            <h3>Add Task</h3>
-                            {newTodo}
-                            <input 
-                                type ="text" 
-                                className ="add-todo-input" 
-                                placeholder="Task name"
-                                onChange = {(e) => setNewTodo(e.target.value)}
-                                value = {newTodo} 
-                            />
-                            {/* Priority input */}
-                            <div className='input-group'>
-                                <label htmlFor="Priority">Priority:</label>
-                                <select
-                                    id='priority'
-                                    value={newPriority}
-                                    onChange={(e) => setNewPriority(e.target.value)}
-                                >
-                                    <option value="low">Low</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="high">High</option>
-                                </select>
-                            </div>
-                            {/* Due date input */}
-                            <div className='input-group'>
-                                <label htmlFor="dueDate">Due Date:</label>
-                                <input 
-                                type="date"
-                                id='dueDate'
-                                value={newDueDate}
-                                onChange={(e) => setNewDueDate(e.target.value)}
-                                />
-                            </div>
-                            <div className ="button" onClick = {addTodo}>Create Task</div>
-                        </div>
-                    </div>
-                    )}
+                {/* AddTodoModal Component */}
+                <AddTodoModal show={popupActive} onClose={() => setPopupActive(false)} onAdd={addTodo} />
+                <div className="addPopup" onClick={() => setPopupActive(true)}>+</div>
             </div>
 		</div>
 	);
